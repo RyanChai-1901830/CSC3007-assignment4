@@ -108,7 +108,7 @@ Promise.all([d3.json("https://chi-loong.github.io/CSC3007/assignments/links-samp
     // On mouse, remove tooltip
     var mouseleave = function(d) {
         Tooltip.style("opacity", 0);
-        d3.select(this).style("stroke", "none").style("opacity", 0.8);
+        d3.select(this).style("stroke", "None").text("");
     };
 
 
