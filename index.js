@@ -17,6 +17,7 @@ Promise.all([d3.json("https://chi-loong.github.io/CSC3007/assignments/links-samp
     console.log(data[1]); //cases
 
     // Split the main dataset into 2, each being a cluster on its own
+    // Add additional attibute into each of data[1], for splitting purpose 
     var i = 0;
     data[1].forEach(e => {
         if (i < 10) {
@@ -24,6 +25,7 @@ Promise.all([d3.json("https://chi-loong.github.io/CSC3007/assignments/links-samp
         } else {
             e.group = 1;
         }
+        e.images = "https://github.com/favicon.ico";
         i++;
     });
 
@@ -43,18 +45,18 @@ Promise.all([d3.json("https://chi-loong.github.io/CSC3007/assignments/links-samp
         d.fx = null;
         d.fy = null;
     }
-
+    // Color scale for male & female
     let colorScale = d3.scaleOrdinal()
         .domain([0, 1])
-        .range(["pink", "blue"])
-
+        .range(["pink", "blue"]);
+    // Position of the 2 cluster
     var x = d3.scaleOrdinal()
         .domain([0, 1])
-        .range([200, 600])
-
+        .range([200, 600]);
+    // Position for the vaccinated
     var xPosition = d3.scaleOrdinal()
         .domain([0, 1, 2])
-        .range([100, 300, 600])
+        .range([100, 300, 600]);
 
     // Create link for each nodes using data[0]
     let linkpath = svg.append("g")
@@ -72,8 +74,9 @@ Promise.all([d3.json("https://chi-loong.github.io/CSC3007/assignments/links-samp
         .style("opacity", 0)
         .attr("class", "tooltip")
         .style("position", "absolute")
-        .style("background-color", "white")
+        .style("background-color", "lightgreen")
         .style("border", "solid")
+        .style("border-color", "red")
         .style("border-width", "2px")
         .style("border-radius", "5px")
         .style("padding", "5px");
@@ -87,7 +90,7 @@ Promise.all([d3.json("https://chi-loong.github.io/CSC3007/assignments/links-samp
             .style("stroke-width", 3);
     };
 
-    // Create mouse move function
+    // Create mouse move function & display tool tip
     var mousemove = function(d, i) {
         let pos = d3.select(this).node().getBoundingClientRect();
         Tooltip.html("<h6>" + "id: " + i.id + "</h6>" +
@@ -109,7 +112,7 @@ Promise.all([d3.json("https://chi-loong.github.io/CSC3007/assignments/links-samp
     };
 
 
-    let node = svg.append("g")
+    var node = svg.append("g")
         .attr("id", "nodes")
         .selectAll("circle")
         .data(data[1])
@@ -125,26 +128,35 @@ Promise.all([d3.json("https://chi-loong.github.io/CSC3007/assignments/links-samp
             .on("drag", dragged)
             .on("end", dragended))
 
-    node.append("image")
+
+    // var node = svg.append("g")
+    //     .attr("id", "nodes")
+    //     .selectAll("circle")
+    //     .data(data[1])
+    //     .enter()
+    //     .append("circle")
+    //     .attr("r", 20)
+    //     .style("fill", d => colorScale(d.gender))
+    //     .on("mouseover", mouseover)
+    //     .on("mousemove", mousemove)
+    //     .on("mouseleave", mouseleave)
+    //     .call(d3.drag()
+    //         .on("start", dragstarted)
+    //         .on("drag", dragged)
+    //         .on("end", dragended))
+
+    let image = node.append("svg:image")
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr('width', 100)
+        .attr('height', 100)
         .attr("xlink:href", "https://github.com/favicon.ico")
-        .attr("x", "-12px")
-        .attr("y", "-12px")
-        .attr("width", "24px")
-        .attr("height", "24px");
-
-
-    // let image = node.append("svg:image")
-    //     .attr("x", 0)
-    //     .attr("y", 0)
-    //     .attr('width', 100)
-    //     .attr('height', 100)
-    //     .attr("xlink:href", "https://github.com/favicon.ico")
-    // node.append("image")
-    //     .attr("xlink:href", "https://github.com/favicon.ico")
-    //     .attr("x", 0)
-    //     .attr("y", 0)
-    //     .attr("width", 100)
-    //     .attr("height", 100);
+        // node.append("image")
+        //     .attr("xlink:href", "https://github.com/favicon.ico")
+        //     .attr("x", 0)
+        //     .attr("y", 0)
+        //     .attr("width", 100)
+        //     .attr("height", 100);
 
     let simulation = d3.forceSimulation()
         .nodes(data[1])
